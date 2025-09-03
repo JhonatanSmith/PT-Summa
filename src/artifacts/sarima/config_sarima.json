@@ -1,0 +1,18 @@
+{
+  "order": [
+    2,
+    0,
+    2
+  ],
+  "seasonal_order": [
+    1,
+    1,
+    0,
+    12
+  ],
+  "freq": "MS",
+  "date_col": "year_month",
+  "value_col": "demand",
+  "val_months": 4,
+  "horizon": 3
+}

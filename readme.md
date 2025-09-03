@@ -12,30 +12,34 @@ Este proyecto implementa un **pipeline completo de análisis y despliegue de mod
 ## Estructura del proyecto
 
 ```bash
-root/
-  raw/                            # datasets de entrada (series y clasificación)
-  outputs/
-    pics/                         # imágenes (EDA, ACF/PACF, validación, forecast, clf)
-    models/
-      SARIMA_YYYYMMDD_HHMM/       # un run de forecasting (timestamp)
-        model.pkl                 # modelo SARIMA entrenado
-        forecast.csv              # predicciones generadas
-        metadata.json             # parámetros y métricas del run
-      classifier_random_forest/   # último run de clasificación
-        model.pkl                 # modelo de clasificación entrenado
-        metadata.json             # features, métricas y versión
-  src/
-    forecasting.py                # entrena SARIMA y guarda artefactos en outputs/models
-    classifier.py                 # entrena clasificador (RF o LR) y guarda artefactos
-  api/
-    main.py                       # FastAPI: /health, /predict_forecast, /predict_class
-  app/
-    streamlit_app.py              # Home / router de páginas
-    pages/
-      1_Forecasting.py            # UI: carga imágenes y consume /predict_forecast
-      2_Clasificacion.py          # UI: EDA/métricas y consume /predict_class
-      3_Resumen.py                # KPIs globales, links a artefactos y últimas métricas
-  requirements.txt                # dependencias del proyecto
+proyecto_modelos/
+├─ README.md
+├─ requirements.txt
+├─ .gitignore
+├─ src/
+│  ├─ training/
+│  │  ├─ train_sarima.py                 # entrena y guarda SARIMA
+│  │  ├─ train_classifier.py             # entrena y guarda LogReg
+│  │  └─ utils_metrics.py                # métricas simples (rmse, mae, auc, etc.)
+│  ├─ artifacts/
+│  │  ├─ sarima/
+│  │  │  ├─ model_sarima.joblib
+│  │  │  ├─ config_sarima.json           # ordenes (p,d,q)(P,D,Q)m, m, etc.
+│  │  │  └─ backtest_metrics.json        # rmse/mae/mape en validación
+│  │  └─ classifier/
+│  │     ├─ model_best_pipeline.joblib
+│  │     ├─ model_threshold.txt          # 0.56184…
+│  │     └─ eval_report.json             # auc, balanced_acc, f1, etc.
+│  ├─ api/
+│  │  ├─ main.py                         # FastAPI: /health, /forecast, /predict
+│  │  └─ schemas.py                      # pydantic models de entrada/salida
+│  └─ app/
+│     └─ streamlit_app.py                # 3 pestañas (SARIMA, Clasificador, API client)
+└─ data/                                  # opcional: muestras/fixtures
+   └─ sample_payloads/
+      ├─ predict_one.json
+      ├─ predict_batch.json
+      └─ forecast_request.json
 
 ```
 
@@ -80,3 +84,43 @@ Instalar dependencias con:
 ```bash
 pip install -r requirements.txt
 ```
+
+---
+
+## Uso de la aplicación
+
+Una vez entrenados los modelos y generados los artefactos en `src/artifacts/`, puedes interactuar con ellos a través de la **API** y la **App en Streamlit**.
+
+1. **Levantar la API (FastAPI)**  
+   Desde la raíz del proyecto, ejecuta:
+
+```bash
+uvicorn src.api.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+Esto deja la API corriendo en http://localhost:8000/docs ,donde podrás explorar los endpoints:
+
+GET /health → Verifica el estado y artefactos cargados.
+
+POST /forecast → Genera un pronóstico SARIMA.
+
+POST /predict → Clasifica registros como Alpha o Betha.
+
+ 2. **Levantar la App (Streamlit)**
+   En otra terminal, ejecuta:
+
+```bash
+streamlit run src/app/streamlit_app.py
+```
+
+Esto abrirá la interfaz visual con tres pestañas:
+
+- **Forecasting** → Explora el modelo SARIMA, métricas y pronósticos.  
+- **Clasificación** → Consulta métricas de validación y realiza predicciones desde un CSV.  
+- **Predicted CSV** → Sube el archivo `to_predict.csv` y genera automáticamente un nuevo CSV con las columnas `Demand` y `Class` completadas por los modelos.
+
+### Flujo típico
+
+1. Asegúrate de tener la **API levantada primero**.  
+2. Luego abre la app en [http://localhost:8501](http://localhost:8501) y navega por las pestañas.  
+3. En la pestaña **Predicted CSV**, sube el archivo original (`to_predict.csv`) y descarga el archivo enriquecido con las predicciones.  

@@ -1,0 +1,34 @@
+{
+  "data": [
+    {
+      "seniorcity": 1,
+      "charges": 12,
+      "partner": "Yes",
+      "dependents": "No",
+      "service1": "No",
+      "service2": "No",
+      "security": "No",
+      "onlinebackup": "No",
+      "deviceprotection": "No",
+      "techsupport": "Low",
+      "contract": "Two year",
+      "paperlessbilling": "No",
+      "paymentmethod": "Bank transfer"
+    },
+    {
+      "seniorcity": 0,
+      "charges": 88,
+      "partner": "No",
+      "dependents": "Yes",
+      "service1": "Yes",
+      "service2": "Yes",
+      "security": "Yes",
+      "onlinebackup": "Yes",
+      "deviceprotection": "Yes",
+      "techsupport": "High",
+      "contract": "Month-to-month",
+      "paperlessbilling": "Yes",
+      "paymentmethod": "Credit card"
+    }
+  ]
+}

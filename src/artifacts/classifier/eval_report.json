@@ -1,0 +1,34 @@
+{
+  "model": "LogisticRegression",
+  "class_weight": "balanced",
+  "positive_class_label": "Betha",
+  "n_samples_train": 5634,
+  "n_samples_test": 1409,
+  "n_features": 13,
+  "num_cols": [
+    "seniorcity",
+    "charges"
+  ],
+  "cat_cols": [
+    "partner",
+    "dependents",
+    "service1",
+    "service2",
+    "security",
+    "onlinebackup",
+    "deviceprotection",
+    "techsupport",
+    "contract",
+    "paperlessbilling",
+    "paymentmethod"
+  ],
+  "threshold": 0.5499999999999999,
+  "metrics_test_at_threshold": {
+    "roc_auc": 0.8174210132010644,
+    "balanced_accuracy": 0.7415936862228423,
+    "f1_positive": 0.6032432432432432,
+    "accuracy": 0.7395315826827538
+  },
+  "random_state": 42,
+  "notes": "M\u00e9tricas umbralizadas sobre test; POS_LABEL='Betha'."
+}
